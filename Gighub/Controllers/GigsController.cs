@@ -1,33 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 
 namespace Gighub.Controllers
 {
-    using System.Web.Razor;
+    using System;
+    using System.ComponentModel.DataAnnotations;
 
     using Gighub.Models;
     using Gighub.ViewModels;
 
+    using Microsoft.AspNet.Identity;
+
     public class GigsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
 
         public GigsController()
         {
-            _context = new ApplicationDbContext();
+            this.context = new ApplicationDbContext();
         }
-        // GET: Gigs
+       [Authorize]
         public ActionResult Create()
         {
            var viewModel = new GigFormViewModel()
                                {
-                                   Genres = _context.Genres.ToList()
+                                   Genres = this.context.Genres.ToList()
                                };
 
-            return View(viewModel);
+            return this.View(viewModel);
+        }
+
+        [HttpPost]
+        public ActionResult Create(GigFormViewModel viewModel)
+        {
+            var artistId = this.User.Identity.GetUserId();
+            var artist = this.context.Users.Single(u => u.Id == artistId);
+            var genre = this.context.Genres.Single(g => g.Id == viewModel.Genre);
+            var gig = new Gig()
+            {
+                Artist = artist,
+                DateTime = Convert.ToDateTime(viewModel.Date +" "+ viewModel.Time),
+                Genre = genre,
+                Venue = viewModel.Venue
+            };
+            context.Gigs.Add(gig);
+            context.SaveChanges();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
