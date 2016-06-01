@@ -39,13 +39,13 @@ namespace Gighub.Controllers
             var gig = new Gig()
             {
                 Artist = artist,
-                DateTime = Convert.ToDateTime(viewModel.Date +" "+ viewModel.Time),
+                DateTime = viewModel.DateTime,
                 Genre = genre,
                 Venue = viewModel.Venue
             };
-            context.Gigs.Add(gig);
-            context.SaveChanges();
-            return RedirectToAction("Index", "Home");
+            this.context.Gigs.Add(gig);
+            this.context.SaveChanges();
+            return this.RedirectToAction("Index", "Home");
         }
     }
 }

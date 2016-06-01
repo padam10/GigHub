@@ -2,6 +2,8 @@
 
 namespace Gighub.ViewModels
 {
+    using System;
+
     using Gighub.Models;
 
     public class GigFormViewModel
@@ -13,5 +15,7 @@ namespace Gighub.ViewModels
         public int Genre { get; set; }
 
         public IEnumerable<Genre> Genres { get; set; }
+
+        public DateTime DateTime => Convert.ToDateTime(this.Date + " " + this.Time);
     }
 }
